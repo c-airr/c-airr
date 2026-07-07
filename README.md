@@ -1,1 +1,1 @@
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=c-airr&layout=pie&theme=dark)
+![Top Langs](https://stats.discordbothosting.pl/api/top-langs?username=c-airr&layout=compact&theme=dark)
