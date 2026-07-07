@@ -8,12 +8,12 @@
       <img width="415" height="200" alt="GitHub Stats" src="https://stats.discordbothosting.pl/api?username=c-airr&theme=dark&show_icons=true&include_all_commits=true&hide_rank=true&card_width=415" />
     </td>
     <td width="50%" align="center">
-      <img width="415" height="200" alt="Top Languages" src="https://stats.discordbothosting.pl/api/top-langs?username=c-airr&layout=donut&theme=dark&card_width=280&langs_count=4&hide_title=true" />
+      <img width="415" height="200" alt="Top Languages" src="https://stats.discordbothosting.pl/api/top-langs?username=c-airr&layout=donut&theme=dark&card_width=280&langs_count=5&group_other=true&hide_title=true" />
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img width="415" height="200" alt="GitHub Streak" src="https://streak-stats.demolab.com/?user=c-airr&theme=dark" />
+      <img width="415" height="200" alt="GitHub Streak" src="https://stats.discordbothosting.pl/streak/?user=c-airr&theme=dark" />
     </td>
     <td width="50%" align="center">
       <table cellpadding="0" cellspacing="0" width="415" height="200" style="border:1px solid #e4e2e2;border-radius:4px;background:#151515;">
