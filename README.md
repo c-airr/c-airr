@@ -20,10 +20,10 @@
         <tr>
           <td align="center" valign="middle">
             <img src="https://img.shields.io/badge/-Python-black?style=for-the-badge&logo=python" />
-            <img src="https://img.shields.io/badge/-Java-black?style=for-the-badge&logo=openjdk" />
+            <img src="https://img.shields.io/badge/-Go-black?style=for-the-badge&logo=go" />
             <img src="https://img.shields.io/badge/-C++-black?style=for-the-badge&logo=cplusplus" />
             <br/><br/>
-            <img src="https://img.shields.io/badge/-Go-black?style=for-the-badge&logo=go" />
+            <img src="https://img.shields.io/badge/-Java-black?style=for-the-badge&logo=openjdk" />
             <img src="https://img.shields.io/badge/-Dart-black?style=for-the-badge&logo=dart" />
             <img src="https://img.shields.io/badge/-Git-black?style=for-the-badge&logo=git" />
           </td>
