@@ -16,8 +16,8 @@ const STATUS = {
 const VERB = { 0: "Playing", 1: "Streaming", 2: "Listening to", 3: "Watching", 5: "Competing in" };
 
 const STYLE = `<style>
-.fg{fill:#1f2328}.m{fill:#59636e}.ring{stroke:#ffffff}.ph{fill:#eff2f5}
-@media (prefers-color-scheme:dark){.fg{fill:#e6edf3}.m{fill:#9198a1}.ring{stroke:#0d1117}.ph{fill:#151b23}}
+.fg{fill:#1f2328}.m{fill:#59636e}.ring{stroke:#ffffff}.ph{fill:#eff2f5}.trk{fill:#d1d9e0}
+@media (prefers-color-scheme:dark){.fg{fill:#e6edf3}.m{fill:#9198a1}.ring{stroke:#0d1117}.ph{fill:#151b23}.trk{fill:#30363d}}
 </style>`;
 
 const esc = (s) =>
@@ -59,6 +59,40 @@ function elapsed(start) {
 
 const MAX_ACTS = 2;
 
+const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+// Pasek postepu utworu + czas "0:26 / 3:11". Obrazek powstaje w chwili wejscia,
+// a dalej pasek i sekundy leca same (SMIL), az do konca utworu.
+function progress(a, x1, x2) {
+  const total = Math.max(1, Math.round((a.end - a.start) / 1000));
+  const now = Math.min(total, Math.max(0, Math.round((Date.now() - a.start) / 1000)));
+  const left = total - now;
+  const w = x2 - x1;
+  const w0 = (w * now) / total;
+  const out = [
+    `<rect class="trk" x="${x1}" y="87" width="${w}" height="3" rx="1.5"/>`,
+    `<rect x="${x1}" y="87" width="${w0.toFixed(1)}" height="3" rx="1.5" fill="#1db954">` +
+      (left ? `<animate attributeName="width" from="${w0.toFixed(1)}" to="${w}" dur="${left}s" fill="freeze"/>` : "") +
+      `</rect>`,
+  ];
+  // licznik sekund: osobny tekst na kazda sekunde, pokazywany przez <set> (max 15 min)
+  const tag = (t, extra) =>
+    `<text class="m" x="${x2}" y="79" text-anchor="end" font-family="${FONT}" font-size="11"${extra}>${mmss(t)} / ${mmss(total)}</text>`;
+  if (!left || left > 900) return out.concat(tag(now, "")).join("");
+  for (let k = 0; k <= left; k++) {
+    const last = k === left;
+    out.push(
+      tag(now + k, k ? ' visibility="hidden"' : "").replace(
+        "</text>",
+        (k ? `<set attributeName="visibility" to="visible" begin="${k}s"${last ? "" : ' dur="1s"'}/>` : "") +
+          (last ? "" : `<set attributeName="visibility" to="hidden" begin="${k + 1}s"/>`) +
+          "</text>"
+      )
+    );
+  }
+  return out.join("");
+}
+
 function describe(d) {
   const out = [];
   // Spotify ma osobne pole z ladniejszymi danymi; jego wpis w activities pomijamy
@@ -68,6 +102,8 @@ function describe(d) {
       sub: `by ${d.spotify.artist}`,
       img: d.spotify.album_art_url,
       name: "Spotify",
+      start: d.spotify.timestamps?.start,
+      end: d.spotify.timestamps?.end,
     });
   }
   for (const act of d.activities || []) {
@@ -122,9 +158,11 @@ async function render(d) {
               `<text class="m" x="${x + 20}" y="69" text-anchor="middle" font-family="${FONT}" font-size="16" font-weight="700">` +
               `${esc((a.name.match(/[A-Za-z0-9]/) || ["?"])[0].toUpperCase())}</text>`
       );
+      const prog = a.start && a.end ? progress(a, x + 52, x + bw - 16) : "";
       parts.push(
         `<text class="fg" x="${x + 52}" y="60" font-family="${FONT}" font-size="13">${esc(cut(a.line, chars))}</text>`,
-        `<text class="m" x="${x + 52}" y="79" font-family="${FONT}" font-size="12">${esc(cut(a.sub, chars + 6))}</text>`
+        `<text class="m" x="${x + 52}" y="79" font-family="${FONT}" font-size="12">${esc(cut(a.sub, prog ? chars - 8 : chars + 6))}</text>`,
+        prog
       );
     });
   } else {
