@@ -145,9 +145,13 @@ def render(user, days, commits):
         f"<style>{STYLE}</style>",
     ]
 
-    # streak jak w starym widgecie: 3 kolumny, srodkowa z pierscieniem i plomieniem
-    col = W / 3
-    for i in (1, 2):
+    nodes = repos["nodes"]
+    pub = sum(1 for r in nodes if not r["isPrivate"])
+    priv = len(nodes) - pub
+
+    # 4 kolumny: contributions | streak z pierscieniem i plomieniem | longest | repozytoria
+    col = W / 4
+    for i in (1, 2, 3):
         out.append(f'<line class="ln" x1="{col * i:.0f}" y1="22" x2="{col * i:.0f}" y2="132" stroke-width="1"/>')
 
     def side(cx, value, label, sub):
@@ -156,11 +160,12 @@ def render(user, days, commits):
         out.append(f'<text class="m" x="{cx:.0f}" y="122" text-anchor="middle" font-size="11">{escape(sub)}</text>')
 
     side(col / 2, f"{total:,}", "Total contributions",
-         f"{commits:,} commits · since {fmt(first, True)}" if first else "")
+         f"{commits:,} commits · since {dt.date.fromisoformat(first):%b %Y}" if first else "")
     side(col * 2.5, str(best), "Longest streak", span(best_s, best_e))
+    side(col * 3.5, str(len(nodes)), "Repositories", f"{pub} public · {priv} private")
 
     # pierscien rysuje sie przy wczytaniu; przerwa u gory na plomien
-    cx, cy, r = W / 2, 62, 40
+    cx, cy, r = col * 1.5, 62, 40
     circ = 2 * 3.14159 * r
     out.append(f'<circle class="trk" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke-width="5"/>')
     out.append(
@@ -174,10 +179,7 @@ def render(user, days, commits):
     out.append(f'<text x="{cx}" y="{cy + 58}" text-anchor="middle" font-size="13" font-weight="700" style="fill:{ORANGE}">Current streak</text>')
     out.append(f'<text class="m" x="{cx}" y="{cy + 80}" text-anchor="middle" font-size="11">{escape(span(cur_s, cur_e))}</text>')
 
-    # jezyki: jeden pasek ze wszystkich repo, pod spodem liczba publicznych/prywatnych
-    nodes = repos["nodes"]
-    pub = sum(1 for r in nodes if not r["isPrivate"])
-    priv = len(nodes) - pub
+    # jezyki: jeden pasek ze wszystkich repo
     y0 = 170
     out.append(f'<text x="{PAD}" y="{y0 + 12}" font-size="13" font-weight="600">Languages</text>')
     out.append(
@@ -185,10 +187,7 @@ def render(user, days, commits):
         f"all repositories</text>"
     )
     y = lang_block(out, y0 + 24, nodes, "all", W, PAD)
-    out.append(
-        f'<text class="m" x="{PAD}" y="{y + 6}" font-size="10.5">public: {pub} · private: {priv}</text>'
-    )
-    H = y + 14
+    H = y - 6
     out[0] = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">'
     out.append("</svg>")
     return "\n".join(out)
