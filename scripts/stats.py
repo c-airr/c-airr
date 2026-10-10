@@ -46,7 +46,7 @@ def fetch():
           name login createdAt
           repositories(ownerAffiliations:OWNER, isFork:false, first:100){
             totalCount
-            nodes{ stargazerCount languages(first:10, orderBy:{field:SIZE,direction:DESC}){
+            nodes{ isPrivate stargazerCount languages(first:10, orderBy:{field:SIZE,direction:DESC}){
               edges{ size node{ name color } } } } } } }""",
         {"login": LOGIN},
     )["user"]
@@ -136,7 +136,6 @@ ORANGE = "#fb8f44"
 def render(user, days, commits):
     repos = user["repositories"]
     (cur, cur_s, cur_e), (best, best_s, best_e) = streaks(days)
-    langs = languages(repos["nodes"])
     total = sum(days.values())
     first = min((d for d, c in days.items() if c), default=None)
 
@@ -175,28 +174,54 @@ def render(user, days, commits):
     out.append(f'<text x="{cx}" y="{cy + 58}" text-anchor="middle" font-size="13" font-weight="700" style="fill:{ORANGE}">Current streak</text>')
     out.append(f'<text class="m" x="{cx}" y="{cy + 80}" text-anchor="middle" font-size="11">{escape(span(cur_s, cur_e))}</text>')
 
-    # jezyki: pasek jak na stronie repo + legenda z kropkami
+    # jezyki: pasek jak na stronie repo + legenda z kropkami, osobno publiczne i prywatne
+    # (prywatne widac tylko z tokenem STATS_TOKEN; z GITHUB_TOKEN ta czesc znika)
+    pub = [r for r in repos["nodes"] if not r["isPrivate"]]
+    priv = [r for r in repos["nodes"] if r["isPrivate"]]
     y0 = 170
-    rest = 1 - sum(s for _, s, _ in langs)
-    if rest > 0.005:
-        langs = langs + [("Other", rest, DIM)]
     out.append(f'<text x="{PAD}" y="{y0 + 12}" font-size="13" font-weight="600">Languages</text>')
-    bar_w = W - 2 * PAD
-    out.append(f'<clipPath id="bar"><rect x="{PAD}" y="{y0 + 24}" width="{bar_w}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
-    x = PAD
-    for _, share, color in langs:
-        w = share * bar_w
-        out.append(f'<rect x="{x:.1f}" y="{y0 + 24}" width="{max(w - 2, 0):.1f}" height="8" fill="{color}"/>')
-        x += w
-    out.append("</g>")
-    x = PAD
-    for name, share, color in langs:
-        out.append(f'<circle cx="{x + 4}" cy="{y0 + 54}" r="4" fill="{color}"/>')
+    out.append(
+        f'<text x="{W - PAD}" y="{y0 + 12}" text-anchor="end" font-size="12">{len(pub)} repositories'
+        + (f'<tspan class="m" font-size="10.5"> (private: {len(priv)})</tspan>' if priv else "")
+        + "</text>"
+    )
+
+    def lang_block(y, label, group, n):
+        ls = languages(group)
+        rest = 1 - sum(s for _, s, _ in ls)
+        if rest > 0.005:
+            ls = ls + [("Other", rest, DIM)]
+        if label:
+            out.append(f'<text class="m" x="{PAD}" y="{y}" font-size="10.5">{label}</text>')
+            y += 10
+        bar_w = W - 2 * PAD
         out.append(
-            f'<text x="{x + 14}" y="{y0 + 58}" font-size="12"><tspan font-weight="600">{escape(name)}</tspan>'
-            f'<tspan class="m"> {share * 100:.1f}%</tspan></text>'
+            f'<clipPath id="bar{n}"><rect x="{PAD}" y="{y}" width="{bar_w}" height="8" rx="4"/></clipPath>'
+            f'<g clip-path="url(#bar{n})">'
         )
-        x += 14 + (len(name) + len(f" {share * 100:.1f}%")) * 7.2 + 22
+        x = PAD
+        for _, share, color in ls:
+            w = share * bar_w
+            out.append(f'<rect x="{x:.1f}" y="{y}" width="{max(w - 2, 0):.1f}" height="8" fill="{color}"/>')
+            x += w
+        out.append("</g>")
+        x = PAD
+        for name, share, color in ls:
+            out.append(f'<circle cx="{x + 4}" cy="{y + 30}" r="4" fill="{color}"/>')
+            out.append(
+                f'<text x="{x + 14}" y="{y + 34}" font-size="12"><tspan font-weight="600">{escape(name)}</tspan>'
+                f'<tspan class="m"> {share * 100:.1f}%</tspan></text>'
+            )
+            x += 14 + (len(name) + len(f" {share * 100:.1f}%")) * 7.2 + 22
+        return y + 50
+
+    if priv:
+        y = lang_block(y0 + 34, "public", pub, 0)
+        y = lang_block(y + 6, "private", priv, 1)
+    else:
+        y = lang_block(y0 + 24, None, pub, 0)
+    H = y + 4
+    out[0] = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">'
 
     # heatmapy i liczby contributions nie ma, bo GitHub pokazuje je pod README
     out.append("</svg>")
