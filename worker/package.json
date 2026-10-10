@@ -1,0 +1,5 @@
+{
+  "name": "discord-presence",
+  "private": true,
+  "type": "module"
+}

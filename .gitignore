@@ -1,0 +1,8 @@
+﻿preview.html
+zoom.html
+presence*.html
+presence-*.svg
+worker/test-local.mjs
+worker/.wrangler/
+worker/node_modules/
+check.html
