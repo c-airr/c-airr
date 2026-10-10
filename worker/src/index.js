@@ -159,10 +159,19 @@ async function render(d) {
               `${esc((a.name.match(/[A-Za-z0-9]/) || ["?"])[0].toUpperCase())}</text>`
       );
       const prog = a.start && a.end ? progress(a, x + 52, x + bw - 16) : "";
+      // po koncu utworu: wyszarzamy blok i zamiast wykonawcy prosimy o odswiezenie
+      const left = prog ? Math.max(0, Math.round((a.end - Date.now()) / 1000)) : null;
+      const ended = (attr, to) => (left === null ? "" : `<set attributeName="${attr}" to="${to}" begin="${left}s"/>`);
       parts.push(
+        `<g>${ended("opacity", "0.45")}`,
         `<text class="fg" x="${x + 52}" y="60" font-family="${FONT}" font-size="13">${esc(cut(a.line, chars))}</text>`,
-        `<text class="m" x="${x + 52}" y="79" font-family="${FONT}" font-size="12">${esc(cut(a.sub, prog ? chars - 8 : chars + 6))}</text>`,
-        prog
+        `<text class="m" x="${x + 52}" y="79" font-family="${FONT}" font-size="12">${esc(cut(a.sub, prog ? chars - 8 : chars + 6))}${ended("visibility", "hidden")}</text>`,
+        prog,
+        `</g>`,
+        left === null
+          ? ""
+          : `<text class="fg" x="${x + 52}" y="79" font-family="${FONT}" font-size="11" visibility="hidden">` +
+              `refresh for the current track${ended("visibility", "visible")}</text>`
       );
     });
   } else {
