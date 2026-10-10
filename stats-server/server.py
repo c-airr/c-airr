@@ -40,6 +40,8 @@ class Handler(BaseHTTPRequestHandler):
                 body = stats.render(*data())
             elif path in ("/langs/public", "/langs/private"):
                 body = stats.render_langs(data()[0], path.rsplit("/", 1)[1])
+            elif path == "/lastfm/card":
+                body = lastfm.render_compact()
             elif path.startswith("/lastfm/"):
                 parts = path.split("/")  # ["", "lastfm", kind, period]
                 kind, period = (parts + ["", ""])[2:4]

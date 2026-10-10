@@ -179,3 +179,69 @@ def render_tracks(period):
         out.append(f'<text class="m" x="4" y="60" font-size="12">No scrobbles in this period</text>')
     out.append("</svg>")
     return "".join(out)
+
+
+# --- zwarta karta (30 dni) na dol profilu: artysci po lewej, utwory po prawej ---
+
+
+def _small(url):
+    # do zwartej karty wystarcza miniatury 56px (mniejszy SVG)
+    return url.replace("/250x250-", "/56x56-") if url else url
+
+
+def render_compact(period="1month"):
+    def load():
+        arts = _lastfm("user.gettopartists", period)["topartists"]["artist"]
+        trks = _lastfm("user.gettoptracks", period)["toptracks"]["track"]
+        a = []
+        for x in arts:
+            hit = _deezer("search/artist", x["name"])
+            a.append((x["name"], int(x["playcount"]), _data_uri(_small(hit and hit.get("picture_medium")))))
+        t = []
+        for x in trks:
+            artist, title = x["artist"]["name"], x["name"]
+            clean = re.sub(r"\s*[\(\[].*?[\)\]]|\s+-\s+.*$", "", title).strip() or title
+            hit = _deezer("search", f"{artist} {clean}")
+            cover = hit and (hit.get("album") or {}).get("cover_medium")
+            t.append((clean, artist, int(x["playcount"]), _data_uri(_small(cover))))
+        return a, t
+
+    arts, trks = _cached("compact", period, load)
+    W, H = 860, 168
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', STYLE]
+    out.append('<text class="m" x="4" y="12" font-size="10" letter-spacing="1">TOP ARTISTS</text>')
+    out.append('<text class="m" x="444" y="12" font-size="10" letter-spacing="1">TOP TRACKS</text>')
+    out.append(
+        f'<text class="m" x="{W - 4}" y="12" text-anchor="end" font-size="10">{PERIODS[period]} · last.fm</text>'
+    )
+    col = 84
+    for i, (name, plays, img) in enumerate(arts[:5]):
+        cx, cy, r = 4 + col * i + col / 2, 52, 24
+        out.append(f'<clipPath id="c{i}"><circle cx="{cx}" cy="{cy}" r="{r}"/></clipPath>')
+        out.append(
+            f'<image href="{img}" x="{cx - r}" y="{cy - r}" width="{2 * r}" height="{2 * r}" '
+            f'clip-path="url(#c{i})" preserveAspectRatio="xMidYMid slice"/>'
+            if img else f'<circle class="ph" cx="{cx}" cy="{cy}" r="{r}"/>'
+        )
+        out.append(
+            f'<text x="{cx}" y="{cy + r + 17}" text-anchor="middle" font-size="10.5" font-weight="700">'
+            f"{escape(cut(name, 12))}</text>"
+        )
+        out.append(f'<text class="m" x="{cx}" y="{cy + r + 31}" text-anchor="middle" font-size="9.5">{plays:,} plays</text>')
+    for i, (title, artist, plays, img) in enumerate(trks[:5]):
+        y = 22 + i * 28
+        out.append(f'<clipPath id="t{i}"><rect x="444" y="{y}" width="22" height="22" rx="4"/></clipPath>')
+        out.append(
+            f'<image href="{img}" x="444" y="{y}" width="22" height="22" clip-path="url(#t{i})" '
+            f'preserveAspectRatio="xMidYMid slice"/>'
+            if img else f'<rect class="ph" x="444" y="{y}" width="22" height="22" rx="4"/>'
+        )
+        out.append(
+            f'<text x="476" y="{y + 15}" font-size="11"><tspan font-weight="700">{escape(cut(title, 26))}</tspan>'
+            f'<tspan class="m"> · {escape(cut(artist, 18))}</tspan></text>'
+        )
+        out.append(f'<text class="m" x="{W - 4}" y="{y + 15}" text-anchor="end" font-size="10">{plays:,} plays</text>')
+    if not arts and not trks:
+        out.append('<text class="m" x="4" y="60" font-size="11">No scrobbles in this period</text>')
+    out.append("</svg>")
+    return "".join(out)
