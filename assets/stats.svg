@@ -6,9 +6,9 @@ text{font-family:'JetBrains Mono','Fira Code','Cascadia Code',Consolas,Menlo,mon
   text{fill:#e6edf3}
   .m{fill:#9198a1}
 }</style>
-<text x="108" y="46" text-anchor="middle" font-size="28" font-weight="700">378</text>
+<text x="108" y="46" text-anchor="middle" font-size="28" font-weight="700">379</text>
 <text class="m" x="108" y="70" text-anchor="middle" font-size="12">commits</text>
-<text x="322" y="46" text-anchor="middle" font-size="28" font-weight="700">21</text>
+<text x="322" y="46" text-anchor="middle" font-size="28" font-weight="700">12</text>
 <text class="m" x="322" y="70" text-anchor="middle" font-size="12">repositories</text>
 <text x="538" y="46" text-anchor="middle" font-size="28" font-weight="700">9</text>
 <text class="m" x="538" y="70" text-anchor="middle" font-size="12">day streak</text>
@@ -16,23 +16,23 @@ text{font-family:'JetBrains Mono','Fira Code','Cascadia Code',Consolas,Menlo,mon
 <text class="m" x="752" y="70" text-anchor="middle" font-size="12">longest streak</text>
 <text x="4" y="118" font-size="13" font-weight="600">Languages</text>
 <clipPath id="bar"><rect x="4" y="130" width="852" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">
-<rect x="4.0" y="130" width="236.6" height="8" fill="#00B4AB"/>
-<rect x="242.6" y="130" width="187.7" height="8" fill="#00ADD8"/>
-<rect x="432.3" y="130" width="164.6" height="8" fill="#f34b7d"/>
-<rect x="598.9" y="130" width="103.9" height="8" fill="#3572A5"/>
-<rect x="704.8" y="130" width="94.2" height="8" fill="#f1e05a"/>
-<rect x="801.0" y="130" width="53.0" height="8" fill="#7d8590"/>
+<rect x="4.0" y="130" width="309.7" height="8" fill="#00B4AB"/>
+<rect x="315.7" y="130" width="234.1" height="8" fill="#00ADD8"/>
+<rect x="551.8" y="130" width="223.0" height="8" fill="#f34b7d"/>
+<rect x="776.8" y="130" width="18.2" height="8" fill="#5686a5"/>
+<rect x="797.1" y="130" width="16.0" height="8" fill="#DA3434"/>
+<rect x="815.1" y="130" width="38.9" height="8" fill="#7d8590"/>
 </g>
 <circle cx="8" cy="160" r="4" fill="#00B4AB"/>
-<text x="18" y="164" font-size="12"><tspan font-weight="600">Dart</tspan><tspan class="m"> 28.0%</tspan></text>
+<text x="18" y="164" font-size="12"><tspan font-weight="600">Dart</tspan><tspan class="m"> 36.6%</tspan></text>
 <circle cx="116.0" cy="160" r="4" fill="#00ADD8"/>
-<text x="126.0" y="164" font-size="12"><tspan font-weight="600">Go</tspan><tspan class="m"> 22.3%</tspan></text>
+<text x="126.0" y="164" font-size="12"><tspan font-weight="600">Go</tspan><tspan class="m"> 27.7%</tspan></text>
 <circle cx="209.6" cy="160" r="4" fill="#f34b7d"/>
-<text x="219.6" y="164" font-size="12"><tspan font-weight="600">C++</tspan><tspan class="m"> 19.6%</tspan></text>
-<circle cx="310.4" cy="160" r="4" fill="#3572A5"/>
-<text x="320.4" y="164" font-size="12"><tspan font-weight="600">Python</tspan><tspan class="m"> 12.4%</tspan></text>
-<circle cx="432.79999999999995" cy="160" r="4" fill="#f1e05a"/>
-<text x="442.79999999999995" y="164" font-size="12"><tspan font-weight="600">JavaScript</tspan><tspan class="m"> 11.3%</tspan></text>
-<circle cx="584.0" cy="160" r="4" fill="#7d8590"/>
-<text x="594.0" y="164" font-size="12"><tspan font-weight="600">Other</tspan><tspan class="m"> 6.5%</tspan></text>
+<text x="219.6" y="164" font-size="12"><tspan font-weight="600">C++</tspan><tspan class="m"> 26.4%</tspan></text>
+<circle cx="310.4" cy="160" r="4" fill="#5686a5"/>
+<text x="320.4" y="164" font-size="12"><tspan font-weight="600">GLSL</tspan><tspan class="m"> 2.4%</tspan></text>
+<circle cx="411.2" cy="160" r="4" fill="#DA3434"/>
+<text x="421.2" y="164" font-size="12"><tspan font-weight="600">CMake</tspan><tspan class="m"> 2.1%</tspan></text>
+<circle cx="519.2" cy="160" r="4" fill="#7d8590"/>
+<text x="529.2" y="164" font-size="12"><tspan font-weight="600">Other</tspan><tspan class="m"> 4.8%</tspan></text>
 </svg>
