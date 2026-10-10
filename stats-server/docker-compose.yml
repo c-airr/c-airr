@@ -8,6 +8,9 @@ services:
     # PAT_1 z tego samego .env co github-readme-stats (token zostaje tam, gdzie byl)
     env_file:
       - ../github-stats/.env
+      # LASTFM_API_KEY - dopisany recznie, poza repo
+      - path: ./.env
+        required: false
     environment:
       - TZ=Europe/Warsaw
       - PYTHONDONTWRITEBYTECODE=1

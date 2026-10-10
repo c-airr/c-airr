@@ -22,6 +22,38 @@
 
 <br /><br />
 
+<h3>On repeat</h3>
+
+<img src="https://stats.discordbothosting.pl/profile/lastfm/artists/1month" width="100%" alt="Top artists, last 30 days" />
+<br /><br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/tracks/1month" width="100%" alt="Top tracks, last 30 days" />
+
+<details>
+<summary><sub>Last 7 days</sub></summary>
+<br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/artists/7day" width="100%" alt="Top artists, last 7 days" />
+<br /><br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/tracks/7day" width="100%" alt="Top tracks, last 7 days" />
+</details>
+
+<details>
+<summary><sub>Last 6 months</sub></summary>
+<br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/artists/6month" width="100%" alt="Top artists, last 6 months" />
+<br /><br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/tracks/6month" width="100%" alt="Top tracks, last 6 months" />
+</details>
+
+<details>
+<summary><sub>Last 12 months</sub></summary>
+<br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/artists/12month" width="100%" alt="Top artists, last 12 months" />
+<br /><br />
+<img src="https://stats.discordbothosting.pl/profile/lastfm/tracks/12month" width="100%" alt="Top tracks, last 12 months" />
+</details>
+
+<br />
+
 <h3>Technologies I use</h3>
 
 <img src="assets/technologies.svg" width="100%" alt="Unreal Engine 5, Vulkan, C++, Go, Python, VS Code, Cursor, Git, GitHub, Claude, Grok, Hugging Face, Oracle Cloud (OCI), Docker, Tailscale, Cloudflare, Caddy, Linux, Windows 10, macOS, Photoshop, Premiere Pro, After Effects, Substance 3D Painter, Substance 3D Designer, Substance 3D Stager, FL Studio, Ableton Live, Discord" />

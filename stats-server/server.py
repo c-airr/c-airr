@@ -3,6 +3,7 @@
   /stats          - streak + jezyki ze wszystkich repo
   /langs/public   - jezyki tylko z publicznych repo
   /langs/private  - jezyki tylko z prywatnych repo
+  /lastfm/artists/<okres>, /lastfm/tracks/<okres> - okres: 7day, 1month, 6month, 12month
 
 Token GitHub bierzemy z PAT_1 (ten sam .env co github-readme-stats), dane
 cache'ujemy na 30 min, zeby nie mielic API przy kazdym wejsciu na profil.
@@ -14,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 os.environ.setdefault("GH_TOKEN", os.environ.get("PAT_1", ""))
 import stats  # noqa: E402 - stats czyta GH_TOKEN przy imporcie
+import lastfm  # noqa: E402
 
 TTL = int(os.environ.get("CACHE_TTL", 1800))
 PORT = int(os.environ.get("PORT", 8791))
@@ -38,6 +40,14 @@ class Handler(BaseHTTPRequestHandler):
                 body = stats.render(*data())
             elif path in ("/langs/public", "/langs/private"):
                 body = stats.render_langs(data()[0], path.rsplit("/", 1)[1])
+            elif path.startswith("/lastfm/"):
+                parts = path.split("/")  # ["", "lastfm", kind, period]
+                kind, period = (parts + ["", ""])[2:4]
+                period = period or "1month"
+                if kind not in ("artists", "tracks") or period not in lastfm.PERIODS:
+                    self.send_error(404)
+                    return
+                body = (lastfm.render_artists if kind == "artists" else lastfm.render_tracks)(period)
             else:
                 self.send_error(404)
                 return
