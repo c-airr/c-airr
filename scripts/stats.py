@@ -19,10 +19,11 @@ DIM = "#7d8590"
 # kolory jak w Primer (GitHub); jasny motyw przez prefers-color-scheme
 STYLE = f"""
 text{{font-family:{FONT};fill:#1f2328}}
-.m{{fill:#59636e}}
+.m{{fill:#59636e}}.ln{{stroke:#d1d9e0}}.trk{{stroke:#eff2f5}}.bgc{{fill:#ffffff}}
+@keyframes ring{{to{{stroke-dashoffset:0}}}}
 @media (prefers-color-scheme:dark){{
   text{{fill:#e6edf3}}
-  .m{{fill:#9198a1}}
+  .m{{fill:#9198a1}}.ln{{stroke:#262c36}}.trk{{stroke:#151b23}}.bgc{{fill:#0d1117}}
 }}"""
 
 
@@ -74,19 +75,39 @@ def fetch():
 
 
 def streaks(days):
+    """Zwraca (dlugosc, start, koniec) dla biezacego i najdluzszego streaka."""
     dates = sorted(days)
-    longest = run = 0
+    best = (0, None, None)
+    run, start = 0, None
     for d in dates:
-        run = run + 1 if days[d] else 0
-        longest = max(longest, run)
+        if days[d]:
+            run, start = run + 1, start if run else d
+            if run > best[0]:
+                best = (run, start, d)
+        else:
+            run = 0
     # biezacy streak: dzisiaj moze jeszcze byc 0, wtedy liczymy od wczoraj
     cur, i = 0, len(dates) - 1
     if i >= 0 and days[dates[i]] == 0:
         i -= 1
+    end = dates[i] if i >= 0 else None
     while i >= 0 and days[dates[i]]:
         cur += 1
         i -= 1
-    return cur, longest
+    cur_range = (cur, dates[i + 1], end) if cur else (0, None, None)
+    return cur_range, best
+
+
+def fmt(iso, with_year=False):
+    d = dt.date.fromisoformat(iso)
+    s = f"{d:%b} {d.day}"
+    return f"{s}, {d.year}" if with_year or d.year != dt.date.today().year else s
+
+
+def span(start, end):
+    if not start:
+        return "—"
+    return fmt(start) if start == end else f"{fmt(start)} – {fmt(end)}"
 
 
 def languages(repos):
@@ -101,48 +122,78 @@ def languages(repos):
     return [(n, s / total, colors[n]) for n, s in top]
 
 
+FLAME = (  # Primer Octicons flame-16 (MIT)
+    "M9.533.753V.752c.217 2.385 1.463 3.626 2.653 4.81C13.37 6.74 14.498 7.863 14.498 10c0 3.5-3 6-6.5 6S1.5 "
+    "13.512 1.5 10c0-1.298.536-2.56 1.425-3.286.376-.308.862 0 1.035.454C4.46 8.487 5.581 8.419 6 8c.282-.282"
+    ".341-.811-.003-1.5C4.34 3.187 7.035.75 8.77.146c.39-.137.726.194.763.607ZM7.998 14.5c2.832 0 5-1.98 5-4.5 "
+    "0-1.463-.68-2.19-1.879-3.383l-.036-.037c-1.013-1.008-2.3-2.29-2.834-4.434-.322.256-.63.579-.864.953-.432"
+    ".696-.621 1.58-.046 2.73.473.947.67 2.284-.278 3.232-.61.61-1.545.84-2.403.633a2.79 2.79 0 0 1-1.436-.874"
+    "A3.198 3.198 0 0 0 3 10c0 2.53 2.164 4.5 4.998 4.5Z"
+)
+ORANGE = "#fb8f44"
+
+
 def render(user, days, commits):
     repos = user["repositories"]
-    cur, best = streaks(days)
+    (cur, cur_s, cur_e), (best, best_s, best_e) = streaks(days)
     langs = languages(repos["nodes"])
+    total = sum(days.values())
+    first = min((d for d, c in days.items() if c), default=None)
 
-    W, H, PAD = 860, 176, 4
+    W, H, PAD = 860, 250, 4
     out = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
         f"<style>{STYLE}</style>",
     ]
 
-    # liczby jak w GitHub Insights: duza wartosc, pod nia podpis
-    tiles = [
-        (f"{commits:,}", "commits"),
-        (str(repos["totalCount"]), "repositories"),
-        (str(cur), "day streak"),
-        (str(best), "longest streak"),
-    ]
-    colw = W / len(tiles)
-    for i, (val, label) in enumerate(tiles):
-        cx = colw * i + colw / 2
-        out.append(f'<text x="{cx:.0f}" y="46" text-anchor="middle" font-size="28" font-weight="700">{val}</text>')
-        out.append(f'<text class="m" x="{cx:.0f}" y="70" text-anchor="middle" font-size="12">{label}</text>')
+    # streak jak w starym widgecie: 3 kolumny, srodkowa z pierscieniem i plomieniem
+    col = W / 3
+    for i in (1, 2):
+        out.append(f'<line class="ln" x1="{col * i:.0f}" y1="22" x2="{col * i:.0f}" y2="132" stroke-width="1"/>')
+
+    def side(cx, value, label, sub):
+        out.append(f'<text x="{cx:.0f}" y="70" text-anchor="middle" font-size="32" font-weight="700">{value}</text>')
+        out.append(f'<text x="{cx:.0f}" y="100" text-anchor="middle" font-size="13">{label}</text>')
+        out.append(f'<text class="m" x="{cx:.0f}" y="122" text-anchor="middle" font-size="11">{escape(sub)}</text>')
+
+    side(col / 2, f"{total:,}", "Total contributions",
+         f"{commits:,} commits · since {fmt(first, True)}" if first else "")
+    side(col * 2.5, str(best), "Longest streak", span(best_s, best_e))
+
+    # pierscien rysuje sie przy wczytaniu; przerwa u gory na plomien
+    cx, cy, r = W / 2, 62, 40
+    circ = 2 * 3.14159 * r
+    out.append(f'<circle class="trk" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke-width="5"/>')
+    out.append(
+        f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{ORANGE}" stroke-width="5" stroke-linecap="round" '
+        f'stroke-dasharray="{circ:.1f}" stroke-dashoffset="{circ:.1f}" transform="rotate(-90 {cx} {cy})" '
+        f'style="animation:ring 1.2s .2s cubic-bezier(.4,0,.2,1) forwards"/>'
+    )
+    out.append(f'<circle class="bgc" cx="{cx}" cy="{cy - r}" r="13"/>')
+    out.append(f'<path fill="{ORANGE}" transform="translate({cx - 10} {cy - r - 11}) scale(1.25)" d="{FLAME}"/>')
+    out.append(f'<text x="{cx}" y="{cy + 11}" text-anchor="middle" font-size="32" font-weight="700">{cur}</text>')
+    out.append(f'<text x="{cx}" y="{cy + 58}" text-anchor="middle" font-size="13" font-weight="700" style="fill:{ORANGE}">Current streak</text>')
+    out.append(f'<text class="m" x="{cx}" y="{cy + 80}" text-anchor="middle" font-size="11">{escape(span(cur_s, cur_e))}</text>')
 
     # jezyki: pasek jak na stronie repo + legenda z kropkami
+    y0 = 170
     rest = 1 - sum(s for _, s, _ in langs)
     if rest > 0.005:
         langs = langs + [("Other", rest, DIM)]
-    out.append(f'<text x="{PAD}" y="118" font-size="13" font-weight="600">Languages</text>')
+    out.append(f'<text x="{PAD}" y="{y0 + 12}" font-size="13" font-weight="600">Languages</text>')
     bar_w = W - 2 * PAD
-    out.append(f'<clipPath id="bar"><rect x="{PAD}" y="130" width="{bar_w}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
+    out.append(f'<clipPath id="bar"><rect x="{PAD}" y="{y0 + 24}" width="{bar_w}" height="8" rx="4"/></clipPath><g clip-path="url(#bar)">')
     x = PAD
     for _, share, color in langs:
         w = share * bar_w
-        out.append(f'<rect x="{x:.1f}" y="130" width="{max(w - 2, 0):.1f}" height="8" fill="{color}"/>')
+        out.append(f'<rect x="{x:.1f}" y="{y0 + 24}" width="{max(w - 2, 0):.1f}" height="8" fill="{color}"/>')
         x += w
     out.append("</g>")
     x = PAD
     for name, share, color in langs:
-        out.append(f'<circle cx="{x + 4}" cy="160" r="4" fill="{color}"/>')
+        out.append(f'<circle cx="{x + 4}" cy="{y0 + 54}" r="4" fill="{color}"/>')
         out.append(
-            f'<text x="{x + 14}" y="164" font-size="12"><tspan font-weight="600">{escape(name)}</tspan>'
+            f'<text x="{x + 14}" y="{y0 + 58}" font-size="12"><tspan font-weight="600">{escape(name)}</tspan>'
             f'<tspan class="m"> {share * 100:.1f}%</tspan></text>'
         )
         x += 14 + (len(name) + len(f" {share * 100:.1f}%")) * 7.2 + 22
