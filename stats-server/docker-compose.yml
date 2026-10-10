@@ -1,0 +1,17 @@
+services:
+  profile-stats:
+    image: python:3.12-slim
+    container_name: profile-stats
+    working_dir: /app
+    volumes:
+      - ./:/app:ro
+    # PAT_1 z tego samego .env co github-readme-stats (token zostaje tam, gdzie byl)
+    env_file:
+      - ../github-stats/.env
+    environment:
+      - TZ=Europe/Warsaw
+      - PYTHONDONTWRITEBYTECODE=1
+    command: python -u server.py
+    ports:
+      - "127.0.0.1:8791:8791"
+    restart: unless-stopped

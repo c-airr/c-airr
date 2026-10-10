@@ -4,9 +4,17 @@
 
 <br /><br />
 
-<img src="assets/stats.svg" width="100%" alt="GitHub stats" />
+<img src="https://stats.discordbothosting.pl/profile/stats" width="100%" alt="GitHub stats" />
 
+<details>
+<summary><sub>Public / private breakdown</sub></summary>
+<br />
+<img src="https://stats.discordbothosting.pl/profile/langs/public" width="100%" alt="Languages in public repositories" />
 <br /><br />
+<img src="https://stats.discordbothosting.pl/profile/langs/private" width="100%" alt="Languages in private repositories" />
+</details>
+
+<br />
 
 <h3>Right now</h3>
 
