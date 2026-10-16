@@ -49,6 +49,7 @@ STACK = [
     ("Substance 3D", [("mono:Pa", "Painter", "#ff7a45"), ("mono:Dn", "Designer", "#ffb300"),
                       ("mono:St", "Stager", "#4fc3f7")]),
     ("Audio", [("arc:fl-studio-mobile", "FL Studio", "#ff8c00"), ("si:abletonlive", "Ableton Live", "fg")]),
+    ("Embedded", [("si:raspberrypi", "Raspberry Pi Pico", "#c51a4a"), ("si:espressif", "ESP32", "#e7352c")]),
 ]
 
 # "lekko rysowane": drzenie tylko na ramce i cienkim cieniu-kresce, logo zostaje ostre
@@ -63,7 +64,7 @@ ROUGH = "".join(
 HEADER = [
     ("Hi, I'm airr_", "fg", 34),
     ("Game dev · Graphics · Systems · Infra · AI · Automation · 3D · Audio · Video editing", "m", 16),
-    ("Home Assistant · Raspberry Pi Pico · Embedded · Wall Street · US markets · US trap", "m", 15),
+    ("Embedded · IoT · Wall Street · US markets · US trap", "m", 16),
 ]
 
 
