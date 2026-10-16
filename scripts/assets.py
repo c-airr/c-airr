@@ -49,6 +49,7 @@ STACK = [
     ("Substance 3D", [("mono:Pa", "Painter", "#ff7a45"), ("mono:Dn", "Designer", "#ffb300"),
                       ("mono:St", "Stager", "#4fc3f7")]),
     ("Audio", [("arc:fl-studio-mobile", "FL Studio", "#ff8c00"), ("si:abletonlive", "Ableton Live", "fg")]),
+    ("Markets", [("mono:US", "US Stocks", "#2e9e5b")]),
 ]
 
 # "lekko rysowane": drzenie tylko na ramce i cienkim cieniu-kresce, logo zostaje ostre
