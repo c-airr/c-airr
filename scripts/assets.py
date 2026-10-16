@@ -62,7 +62,7 @@ ROUGH = "".join(
 # (tekst, klasa koloru, rozmiar)
 HEADER = [
     ("Hi, I'm airr_", "fg", 34),
-    ("Game dev · Graphics · Systems · Infra · AI · Automation · 3D · Audio · Video editing · US stocks", "m", 15),
+    ("Game dev · Graphics · Systems · Infra · AI · Automation · 3D · Audio · Video editing", "m", 16),
 ]
 
 
