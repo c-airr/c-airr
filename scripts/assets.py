@@ -67,7 +67,7 @@ ROUGH = "".join(
 HEADER = [
     ("Hi, I'm airr_", "fg", 34),
     ("Game dev · Graphics · Systems · Infra · AI · Automation · 3D · Audio · Video editing", "m", 16),
-    ("Embedded · IoT · Wall Street · US markets · US trap", "m", 16),
+    ("Embedded · IoT · Reverse engineering · Wall Street · US markets · US trap", "m", 16),
 ]
 
 
