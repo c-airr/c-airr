@@ -49,7 +49,6 @@ STACK = [
     ("Substance 3D", [("mono:Pa", "Painter", "#ff7a45"), ("mono:Dn", "Designer", "#ffb300"),
                       ("mono:St", "Stager", "#4fc3f7")]),
     ("Audio", [("arc:fl-studio-mobile", "FL Studio", "#ff8c00"), ("si:abletonlive", "Ableton Live", "fg")]),
-    ("Markets", [("mono:US", "US Stocks", "#2e9e5b")]),
 ]
 
 # "lekko rysowane": drzenie tylko na ramce i cienkim cieniu-kresce, logo zostaje ostre
@@ -64,6 +63,7 @@ ROUGH = "".join(
 HEADER = [
     ("Hi, I'm airr_", "fg", 34),
     ("Game dev · Graphics · Systems · Infra · AI · Automation · 3D · Audio · Video editing", "m", 16),
+    ("Home Assistant · Raspberry Pi Pico · Embedded · Wall Street · US markets · US trap", "m", 15),
 ]
 
 
@@ -147,7 +147,7 @@ def icon(spec, color, cx, cy, n, box=64):
 def header():
     """Pisanie znak po znaku. textLength wymusza stala szerokosc znaku,
     wiec odsloniecie i kursor zgadzaja sie niezaleznie od czcionki."""
-    W, H = 860, 110
+    W, H = 860, 140
     char_dt = 0.06
     parts, t = [], 0.3
     for i, (txt, cls, size) in enumerate(HEADER):
