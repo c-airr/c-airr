@@ -5,6 +5,7 @@ services:
     working_dir: /app
     volumes:
       - ./:/app:ro
+      - ./data:/data
     # PAT_1 z tego samego .env co github-readme-stats (token zostaje tam, gdzie byl)
     env_file:
       - ../github-stats/.env

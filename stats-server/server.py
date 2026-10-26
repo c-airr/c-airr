@@ -3,6 +3,7 @@
   /stats          - streak + jezyki ze wszystkich repo
   /langs/public   - jezyki tylko z publicznych repo
   /langs/private  - jezyki tylko z prywatnych repo
+  /games          - top gry z Discorda (licznik rosnie od startu serwera)
   /lastfm/artists/<okres>, /lastfm/tracks/<okres> - okres: 7day, 1month, 6month, 12month
 
 Token GitHub bierzemy z PAT_1 (ten sam .env co github-readme-stats), dane
@@ -16,6 +17,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 os.environ.setdefault("GH_TOKEN", os.environ.get("PAT_1", ""))
 import stats  # noqa: E402 - stats czyta GH_TOKEN przy imporcie
 import lastfm  # noqa: E402
+import games  # noqa: E402
 
 TTL = int(os.environ.get("CACHE_TTL", 1800))
 PORT = int(os.environ.get("PORT", 8791))
@@ -40,6 +42,8 @@ class Handler(BaseHTTPRequestHandler):
                 body = stats.render(*data())
             elif path in ("/langs/public", "/langs/private"):
                 body = stats.render_langs(data()[0], path.rsplit("/", 1)[1])
+            elif path == "/games":
+                body = games.render()
             elif path == "/lastfm/card":
                 body = lastfm.render_compact()
             elif path.startswith("/lastfm/"):
@@ -68,5 +72,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    games.start()
     print(f"profile-stats on :{PORT}", flush=True)
     ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
